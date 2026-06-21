@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { BlockType, getBlockColor, isBlockTransparent, isBlockSolid, isBlockEmissive } from './voxel.js';
+import { BlockType, getBlockColor, isBlockTransparent, isBlockSolid, isBlockEmissive } from '../engine/voxel.js';
 
 const CHUNK_SIZE = 32; // 32x32x32 chunk
 

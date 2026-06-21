@@ -97,7 +97,7 @@ export class Player {
         this.onGround = false;
 
         for (const y of checkY) {
-            const block = world.getBlock(
+            const block = world.getBlockWorld(
                 Math.floor(this.position.x),
                 Math.floor(y),
                 Math.floor(this.position.z)
