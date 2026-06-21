@@ -102,14 +102,36 @@ class Game {
             this.renderer.scene.add(this.shipMesh);
         }
 
-        // 启用控制器
-        this.controller.enable(this.inputManager);
-
         // 设置初始相机位置
         this.renderer.camera.position.copy(this.player.position);
 
         this.state = GameState.PLAYING;
+
+        // 添加点击事件来请求 pointer lock（浏览器安全要求）
+        this.setupPointerLockHandler();
+
         this.gameLoop(performance.now());
+    }
+
+    setupPointerLockHandler() {
+        // 点击 canvas 时请求 pointer lock
+        const canvas = this.renderer.renderer.domElement;
+        
+        const requestLock = () => {
+            if (this.state === GameState.PLAYING && !this.inputManager.pointerLocked) {
+                this.controller.enable(this.inputManager);
+            }
+        };
+
+        canvas.addEventListener('click', requestLock);
+
+        // 当 pointer lock 失效时（如按 ESC），显示提示
+        document.addEventListener('pointerlockchange', () => {
+            if (this.state === GameState.PLAYING && !document.pointerLockElement) {
+                // pointer lock 已退出，可以显示提示或等待用户点击重新获得
+                this.showMessage('点击屏幕继续游戏', 3000);
+            }
+        });
     }
 
     updateLoadingProgress(percent) {
@@ -242,6 +264,9 @@ class Game {
     }
 
     update() {
+        // 清零鼠标移动数据（每帧开始时）
+        this.inputManager.update();
+
         // 处理输入
         this.handleInput();
 
