@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>星尘牧歌 - Stardust Nomad</title>
+    <title>星尘牧歌 | Stardust Nomad</title>
     <style>
         * {
             margin: 0;
@@ -14,7 +14,7 @@
         body {
             overflow: hidden;
             background: #000;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', system-ui, sans-serif;
         }
 
         #game-container {
@@ -27,82 +27,24 @@
             display: block;
         }
 
-        #loading-screen {
-            position: fixed;
+        /* HUD */
+        #hud {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3a 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            transition: opacity 0.5s ease;
-        }
-
-        #loading-screen.hidden {
-            opacity: 0;
             pointer-events: none;
-        }
-
-        #loading-screen h1 {
-            color: #fff;
-            font-size: 48px;
-            margin-bottom: 20px;
-            text-shadow: 0 0 20px rgba(100, 150, 255, 0.5);
-        }
-
-        #loading-screen p {
-            color: #8af;
-            font-size: 18px;
-            margin-bottom: 40px;
-        }
-
-        #start-btn {
-            padding: 15px 50px;
-            font-size: 20px;
-            background: linear-gradient(135deg, #3366cc 0%, #6699ff 100%);
-            border: none;
-            border-radius: 30px;
-            color: white;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        #start-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 30px rgba(100, 150, 255, 0.6);
-        }
-
-        #hud {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            color: white;
-            font-size: 14px;
-            z-index: 100;
-            pointer-events: none;
-        }
-
-        .hud-item {
-            background: rgba(0, 0, 0, 0.6);
-            padding: 8px 15px;
-            margin-bottom: 8px;
-            border-radius: 5px;
-            border-left: 3px solid #6699ff;
+            display: none;
         }
 
         #crosshair {
-            position: fixed;
+            position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             width: 20px;
             height: 20px;
-            z-index: 100;
-            pointer-events: none;
         }
 
         #crosshair::before,
@@ -114,145 +56,379 @@
 
         #crosshair::before {
             width: 2px;
-            height: 100%;
-            left: 50%;
-            transform: translateX(-50%);
+            height: 20px;
+            left: 9px;
+            top: 0;
         }
 
         #crosshair::after {
-            width: 100%;
+            width: 20px;
             height: 2px;
-            top: 50%;
-            transform: translateY(-50%);
+            left: 0;
+            top: 9px;
         }
 
         #hotbar {
-            position: fixed;
+            position: absolute;
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 5px;
-            z-index: 100;
+            gap: 4px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 8px;
+            border-radius: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
         }
 
         .hotbar-slot {
             width: 50px;
             height: 50px;
-            background: rgba(0, 0, 0, 0.7);
-            border: 2px solid #555;
-            border-radius: 5px;
+            background: rgba(50, 50, 50, 0.8);
+            border: 2px solid rgba(100, 100, 100, 0.5);
+            border-radius: 4px;
             display: flex;
-            justify-content: center;
             align-items: center;
-            font-size: 24px;
+            justify-content: center;
+            position: relative;
         }
 
         .hotbar-slot.selected {
-            border-color: #6699ff;
-            box-shadow: 0 0 10px rgba(102, 153, 255, 0.5);
+            border-color: #fff;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
         }
 
-        #debug-info {
-            position: fixed;
+        .hotbar-slot .item-count {
+            position: absolute;
+            bottom: 2px;
+            right: 4px;
+            color: #fff;
+            font-size: 12px;
+            text-shadow: 1px 1px 2px #000;
+        }
+
+        .slot-number {
+            position: absolute;
+            top: 2px;
+            left: 4px;
+            color: #888;
+            font-size: 10px;
+        }
+
+        #stats {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #fff;
+            font-size: 14px;
+            text-shadow: 1px 1px 2px #000;
+        }
+
+        #stats div {
+            margin-bottom: 5px;
+        }
+
+        #coords {
+            position: absolute;
             top: 20px;
             right: 20px;
-            color: white;
+            color: #fff;
             font-size: 12px;
+            text-shadow: 1px 1px 2px #000;
             text-align: right;
-            z-index: 100;
-            pointer-events: none;
         }
 
-        #mode-indicator {
-            position: fixed;
-            bottom: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #8cf;
-            font-size: 16px;
-            padding: 10px 20px;
-            background: rgba(0, 0, 0, 0.6);
-            border-radius: 20px;
-            z-index: 100;
-            pointer-events: none;
-        }
-
-        #block-indicator {
-            position: fixed;
-            top: 50%;
-            right: 20px;
-            transform: translateY(-50%);
-            background: rgba(0, 0, 0, 0.7);
-            padding: 10px 15px;
-            border-radius: 8px;
-            color: white;
-            font-size: 14px;
+        /* Main Menu */
+        #main-menu {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
             z-index: 100;
         }
 
-        #fly-controls {
-            position: fixed;
-            bottom: 100px;
-            left: 20px;
-            background: rgba(0, 0, 0, 0.6);
-            padding: 15px;
-            border-radius: 10px;
-            color: #8cf;
-            font-size: 13px;
-            z-index: 100;
-        }
-
-        #fly-controls h4 {
+        #main-menu h1 {
+            font-size: 72px;
+            font-weight: 300;
+            letter-spacing: 8px;
             margin-bottom: 10px;
+            text-shadow: 0 0 30px rgba(100, 150, 255, 0.5);
+        }
+
+        #main-menu h2 {
+            font-size: 18px;
+            font-weight: 300;
+            color: #8ab;
+            margin-bottom: 60px;
+            letter-spacing: 4px;
+        }
+
+        .menu-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            padding: 15px 60px;
+            margin: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s;
+            pointer-events: auto;
+        }
+
+        .menu-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.6);
+            transform: scale(1.05);
+        }
+
+        #loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            z-index: 200;
+        }
+
+        #loading-bar {
+            width: 300px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        #loading-progress {
+            height: 100%;
+            background: #4af;
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        /* Build Menu */
+        #build-menu {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(20, 20, 30, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 20px;
+            display: none;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            pointer-events: auto;
+        }
+
+        #build-menu h3 {
+            color: #fff;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 10px;
+        }
+
+        .build-category {
+            margin-bottom: 15px;
+        }
+
+        .build-category h4 {
+            color: #8ab;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .build-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+        }
+
+        .build-item {
+            width: 60px;
+            height: 60px;
+            background: rgba(50, 50, 60, 0.8);
+            border: 2px solid rgba(100, 100, 100, 0.5);
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .build-item:hover {
+            border-color: #fff;
+            transform: scale(1.1);
+        }
+
+        .build-item span {
+            color: #fff;
+            font-size: 10px;
+            margin-top: 4px;
+            text-align: center;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: #888;
+            font-size: 24px;
+            cursor: pointer;
+            pointer-events: auto;
+        }
+
+        .close-btn:hover {
             color: #fff;
         }
 
-        #fly-controls p {
+        /* Ship Build Mode */
+        #ship-build-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            pointer-events: auto;
+        }
+
+        #ship-stats {
+            position: absolute;
+            top: 80px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 13px;
+        }
+
+        #ship-stats div {
             margin: 5px 0;
+        }
+
+        .stat-bar {
+            width: 150px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            display: inline-block;
+            vertical-align: middle;
+            overflow: hidden;
+        }
+
+        .stat-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+
+        .stat-mass { background: #f55; }
+        .stat-thrust { background: #5f5; }
+        .stat-power { background: #ff5; }
+
+        /* Messages */
+        #message {
+            position: absolute;
+            top: 30%;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #fff;
+            font-size: 24px;
+            text-shadow: 2px 2px 4px #000;
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+        }
+
+        #message.show {
+            opacity: 1;
         }
     </style>
 </head>
 <body>
-    <div id="loading-screen">
-        <h1>星尘牧歌</h1>
-        <p>Stardust Nomad</p>
-        <button id="start-btn">开始游戏</button>
-    </div>
+    <div id="game-container">
+        <!-- Loading Screen -->
+        <div id="loading">
+            <div>正在加载星尘牧歌...</div>
+            <div id="loading-bar">
+                <div id="loading-progress"></div>
+            </div>
+        </div>
 
-    <div id="game-container"></div>
+        <!-- Main Menu -->
+        <div id="main-menu" style="display: none;">
+            <h1>星尘牧歌</h1>
+            <h2>STARDUST NOMAD</h2>
+            <button class="menu-btn" id="btn-new-game">开始新游戏</button>
+            <button class="menu-btn" id="btn-continue">继续游戏</button>
+            <button class="menu-btn" id="btn-settings">设置</button>
+        </div>
 
-    <div id="hud">
-        <div class="hud-item" id="position-display">位置: 0, 0, 0</div>
-        <div class="hud-item" id="velocity-display">速度: 0</div>
-        <div class="hud-item" id="chunk-display">Chunk: 0, 0</div>
-    </div>
+        <!-- HUD -->
+        <div id="hud">
+            <div id="crosshair"></div>
 
-    <div id="crosshair"></div>
+            <div id="stats">
+                <div id="health">❤ 生命: 100/100</div>
+                <div id="oxygen">🫁 氧气: 100/100</div>
+                <div id="temperature">🌡️ 温度: 20°C</div>
+            </div>
 
-    <div id="hotbar"></div>
+            <div id="coords">
+                <div id="position">X: 0 Y: 0 Z: 0</div>
+                <div id="mode">模式: 探索</div>
+            </div>
 
-    <div id="debug-info"></div>
+            <div id="hotbar"></div>
+        </div>
 
-    <div id="mode-indicator">行走模式</div>
+        <!-- Build Menu -->
+        <div id="build-menu">
+            <span class="close-btn" id="close-build">&times;</span>
+            <h3>建造菜单</h3>
+            <div id="build-categories"></div>
+        </div>
 
-    <div id="block-indicator">
-        <div>目标方块: --</div>
-        <div>距离: --</div>
-    </div>
+        <!-- Ship Build Overlay -->
+        <div id="ship-build-overlay">
+            <div id="ship-stats">
+                <div>🚀 飞船状态</div>
+                <div>质量: <span id="ship-mass">0</span></div>
+                <div>推力: <span id="ship-thrust">0</span></div>
+                <div>能源: <span id="ship-power">0</span></div>
+                <div style="margin-top: 10px;">按 E 放置 | Q 删除 | ESC 退出</div>
+            </div>
+        </div>
 
-    <div id="fly-controls" style="display: none;">
-        <h4>飞行控制</h4>
-        <p>W/S - 前进/后退</p>
-        <p>A/D - 左转/右转</p>
-        <p>空格/Shift - 上升/下降</p>
-        <p>鼠标 - 视角</p>
+        <!-- Message -->
+        <div id="message"></div>
     </div>
 
     <script type="importmap">
     {
         "imports": {
-            "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
         }
     }
     </script>

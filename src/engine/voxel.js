@@ -1,7 +1,4 @@
-// ============================================
-// Block Type Definitions
-// ============================================
-
+// 体素类型定义
 export const BlockType = {
     AIR: 0,
     STONE: 1,
@@ -18,139 +15,63 @@ export const BlockType = {
     LEAVES: 12,
     GLASS: 13,
     METAL: 14,
-    SCI_FI_PANEL: 15
+    SCI_FI_PANEL: 15,
+    COAL_ORE: 16,
+    GOLD_ORE: 17
 };
 
-// Block visual colors (RGB)
-export const BlockColors = {
-    [BlockType.AIR]: null,
-    [BlockType.STONE]: 0x808080,
-    [BlockType.DIRT]: 0x8B4513,
-    [BlockType.GRASS]: 0x567d46,
-    [BlockType.IRON_ORE]: 0xB87333,
-    [BlockType.COPPER_ORE]: 0xCD7F32,
-    [BlockType.SILICON]: 0x6E6E6E,
-    [BlockType.ICE]: 0xADD8E6,
-    [BlockType.LAVA]: 0xFF4500,
-    [BlockType.WATER]: 0x4169E1,
-    [BlockType.SAND]: 0xF4A460,
-    [BlockType.WOOD]: 0xDEB887,
-    [BlockType.LEAVES]: 0x228B22,
-    [BlockType.GLASS]: 0x87CEEB,
-    [BlockType.METAL]: 0xC0C0C0,
-    [BlockType.SCI_FI_PANEL]: 0x4169E1
+// 方块属性
+export const BlockData = {
+    [BlockType.AIR]: { name: '空气', solid: false, transparent: true },
+    [BlockType.STONE]: { name: '石头', solid: true, transparent: false, color: 0x888888 },
+    [BlockType.DIRT]: { name: '泥土', solid: true, transparent: false, color: 0x8B4513 },
+    [BlockType.GRASS]: { name: '草方块', solid: true, transparent: false, color: 0x567d46 },
+    [BlockType.IRON_ORE]: { name: '铁矿', solid: true, transparent: false, color: 0xD2691E },
+    [BlockType.COPPER_ORE]: { name: '铜矿', solid: true, transparent: false, color: 0xB87333 },
+    [BlockType.SILICON]: { name: '硅矿', solid: true, transparent: false, color: 0x87CEEB },
+    [BlockType.ICE]: { name: '冰', solid: true, transparent: true, color: 0xADD8E6 },
+    [BlockType.LAVA]: { name: '岩浆', solid: true, transparent: false, color: 0xFF4500, emissive: true },
+    [BlockType.WATER]: { name: '水', solid: false, transparent: true, color: 0x4169E1 },
+    [BlockType.SAND]: { name: '沙子', solid: true, transparent: false, color: 0xF4A460 },
+    [BlockType.WOOD]: { name: '木头', solid: true, transparent: false, color: 0xDEB887 },
+    [BlockType.LEAVES]: { name: '树叶', solid: true, transparent: true, color: 0x228B22 },
+    [BlockType.GLASS]: { name: '玻璃', solid: true, transparent: true, color: 0xE0FFFF },
+    [BlockType.METAL]: { name: '金属板', solid: true, transparent: false, color: 0xC0C0C0 },
+    [BlockType.SCI_FI_PANEL]: { name: '科幻面板', solid: true, transparent: false, color: 0x4a5568 },
+    [BlockType.COAL_ORE]: { name: '煤矿', solid: true, transparent: false, color: 0x2F1810 },
+    [BlockType.GOLD_ORE]: { name: '金矿', solid: true, transparent: false, color: 0xFFD700 }
 };
 
-// Block properties
-export const BlockProperties = {
-    [BlockType.AIR]: { transparent: true, solid: false },
-    [BlockType.STONE]: { transparent: false, solid: true, miningTime: 1.5 },
-    [BlockType.DIRT]: { transparent: false, solid: true, miningTime: 0.8 },
-    [BlockType.GRASS]: { transparent: false, solid: true, miningTime: 0.8 },
-    [BlockType.IRON_ORE]: { transparent: false, solid: true, miningTime: 2.0, resource: 'iron_ore' },
-    [BlockType.COPPER_ORE]: { transparent: false, solid: true, miningTime: 2.0, resource: 'copper_ore' },
-    [BlockType.SILICON]: { transparent: false, solid: true, miningTime: 2.0, resource: 'silicon' },
-    [BlockType.ICE]: { transparent: true, solid: true, miningTime: 1.0 },
-    [BlockType.LAVA]: { transparent: true, solid: true, miningTime: 3.0, damage: 10 },
-    [BlockType.WATER]: { transparent: true, solid: true, miningTime: 0.5 },
-    [BlockType.SAND]: { transparent: false, solid: true, miningTime: 0.6 },
-    [BlockType.WOOD]: { transparent: false, solid: true, miningTime: 1.0 },
-    [BlockType.LEAVES]: { transparent: true, solid: true, miningTime: 0.4 },
-    [BlockType.GLASS]: { transparent: true, solid: true, miningTime: 0.5 },
-    [BlockType.METAL]: { transparent: false, solid: true, miningTime: 2.5 },
-    [BlockType.SCI_FI_PANEL]: { transparent: false, solid: true, miningTime: 1.5 }
+// 资源类型（可采集的方块对应的资源）
+export const BlockResources = {
+    [BlockType.IRON_ORE]: { item: 'iron_ore', amount: 1 },
+    [BlockType.COPPER_ORE]: { item: 'copper_ore', amount: 1 },
+    [BlockType.SILICON]: { item: 'silicon', amount: 1 },
+    [BlockType.COAL_ORE]: { item: 'coal', amount: 1 },
+    [BlockType.GOLD_ORE]: { item: 'gold_ore', amount: 1 },
+    [BlockType.STONE]: { item: 'stone', amount: 1 },
+    [BlockType.DIRT]: { item: 'dirt', amount: 1 },
+    [BlockType.SAND]: { item: 'sand', amount: 1 },
+    [BlockType.WOOD]: { item: 'wood', amount: 1 },
+    [BlockType.GLASS]: { item: 'glass', amount: 1 }
 };
 
-// Ship block types
-export const ShipBlockType = {
-    FRAME_LIGHT: 100,
-    FRAME_HEAVY: 101,
-    ENGINE_CHEMICAL: 102,
-    ENGINE_ION: 103,
-    ENGINE_WARP: 104,
-    COCKPIT: 105,
-    CARGO: 106,
-    MINING_LASER: 107,
-    SHIELD_GENERATOR: 108,
-    SOLAR_PANEL: 109,
-    ARMOR_PLATE: 110
-};
+// 方块是否透明（用于面剔除）
+export function isBlockTransparent(type) {
+    return BlockData[type]?.transparent || false;
+}
 
-export const ShipBlockColors = {
-    [ShipBlockType.FRAME_LIGHT]: 0x888888,
-    [ShipBlockType.FRAME_HEAVY]: 0x555555,
-    [ShipBlockType.ENGINE_CHEMICAL]: 0xFF6600,
-    [ShipBlockType.ENGINE_ION]: 0x00FFFF,
-    [ShipBlockType.ENGINE_WARP]: 0xFF00FF,
-    [ShipBlockType.COCKPIT]: 0x00FF00,
-    [ShipBlockType.CARGO]: 0xFFFF00,
-    [ShipBlockType.MINING_LASER]: 0xFF0000,
-    [ShipBlockType.SHIELD_GENERATOR]: 0x0088FF,
-    [ShipBlockType.SOLAR_PANEL]: 0x0000FF,
-    [ShipBlockType.ARMOR_PLATE]: 0x666666
-};
+// 方块是否 solid（用于碰撞）
+export function isBlockSolid(type) {
+    return BlockData[type]?.solid || false;
+}
 
-// Resource definitions
-export const ResourceType = {
-    // Raw ores
-    IRON_ORE: 'iron_ore',
-    COPPER_ORE: 'copper_ore',
-    SILICON_ORE: 'silicon',
+// 根据方块类型获取颜色
+export function getBlockColor(type) {
+    return BlockData[type]?.color || 0xffffff;
+}
 
-    // Refined ingots
-    IRON_INGOT: 'iron_ingot',
-    COPPER_INGOT: 'copper_ingot',
-
-    // Materials
-    STEEL: 'steel',
-    GLASS: 'glass',
-    PLASTIC: 'plastic',
-    CIRCUIT: 'circuit',
-
-    // Parts
-    ADVANCED_CIRCUIT: 'advanced_circuit',
-    QUANTUM_PROCESSOR: 'quantum_processor',
-
-    // Equipment
-    MINING_LASER_MK1: 'mining_laser_mk1',
-    SHIELD_MODULE: 'shield_module'
-};
-
-export const ResourceNames = {
-    [ResourceType.IRON_ORE]: '铁矿石',
-    [ResourceType.COPPER_ORE]: '铜矿石',
-    [ResourceType.SILICON_ORE]: '硅矿石',
-    [ResourceType.IRON_INGOT]: '铁锭',
-    [ResourceType.COPPER_INGOT]: '铜锭',
-    [ResourceType.STEEL]: '钢材',
-    [ResourceType.GLASS]: '玻璃',
-    [ResourceType.PLASTIC]: '塑料',
-    [ResourceType.CIRCUIT]: '电路板',
-    [ResourceType.ADVANCED_CIRCUIT]: '高级电路',
-    [ResourceType.QUANTUM_PROCESSOR]: '量子处理器',
-    [ResourceType.MINING_LASER_MK1]: '采矿激光Mk1',
-    [ResourceType.SHIELD_MODULE]: '护盾模块'
-};
-
-// Item definitions
-export const ItemType = {
-    // Tools
-    PICKAXE: 'pickaxe',
-    MINING_LASER: 'mining_laser',
-
-    // Blocks
-    WOOD_BLOCK: 'wood_block',
-    STONE_BLOCK: 'stone_block',
-    METAL_BLOCK: 'metal_block',
-    GLASS_BLOCK: 'glass_block',
-
-    // Ship parts
-    SHIP_FRAME: 'ship_frame',
-    SHIP_ENGINE: 'ship_engine',
-    SHIP_CARGO: 'ship_cargo'
-};
-
-export const ItemNames = {
-    [ItemType.PICKAXE]: '镐',
-    [ItemType.MINING_LASER]: '采矿激光'
-};
+// 方块是否发光
+export function isBlockEmissive(type) {
+    return BlockData[type]?.emissive || false;
+}
