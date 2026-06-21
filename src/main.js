@@ -63,6 +63,55 @@ class Game {
         this.showMenu();
     }
 
+    async startNewGame() {
+        document.getElementById('main-menu').style.display = 'none';
+        document.getElementById('loading').style.display = 'flex';
+        document.getElementById('loading').querySelector('div').textContent = '正在生成世界...';
+
+        // 重置游戏
+        this.world = new World(Date.now());
+        this.player = new Player();
+        this.player.position.set(0, 70, 0);
+        this.ship = Ship.createDefault();
+        this.ship.position.set(0, 75, 0);
+
+        // 初始化快捷栏
+        this.initHotbar();
+
+        // 分帧生成 chunks
+        const worldX = this.player.position.x;
+        const worldY = this.player.position.y;
+        const worldZ = this.player.position.z;
+        await this.world.generateChunksAroundAsync(worldX, worldY, worldZ, (progress) => {
+            this.updateLoadingProgress(Math.floor(20 + progress * 60));
+        });
+
+        // 分帧生成网格
+        await this.world.generateMeshesAsync(this.renderer.scene, (progress) => {
+            this.updateLoadingProgress(Math.floor(80 + progress * 20));
+        });
+
+        // 隐藏加载屏幕，显示 HUD
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('hud').style.display = 'block';
+
+        // 添加飞船到场景
+        this.shipMesh = this.ship.generateMesh();
+        if (this.shipMesh) {
+            this.shipMesh.position.copy(this.ship.position);
+            this.renderer.scene.add(this.shipMesh);
+        }
+
+        // 启用控制器
+        this.controller.enable(this.inputManager);
+
+        // 设置初始相机位置
+        this.renderer.camera.position.copy(this.player.position);
+
+        this.state = GameState.PLAYING;
+        this.gameLoop(performance.now());
+    }
+
     updateLoadingProgress(percent) {
         const progressBar = document.getElementById('loading-progress');
         if (progressBar) {
@@ -79,30 +128,6 @@ class Game {
         document.getElementById('btn-new-game').addEventListener('click', () => this.startNewGame());
         document.getElementById('btn-continue').addEventListener('click', () => this.continueGame());
         document.getElementById('btn-settings').addEventListener('click', () => this.openSettings());
-    }
-
-    startNewGame() {
-        document.getElementById('main-menu').style.display = 'none';
-        document.getElementById('hud').style.display = 'block';
-
-        // 重置游戏
-        this.world = new World(Date.now());
-        this.player = new Player();
-        this.player.position.set(0, 70, 0);
-        this.ship = Ship.createDefault();
-        this.ship.position.set(0, 75, 0);
-
-        // 初始化快捷栏
-        this.initHotbar();
-
-        // 启用控制器
-        this.controller.enable(this.inputManager);
-
-        // 设置初始相机位置
-        this.renderer.camera.position.copy(this.player.position);
-
-        this.state = GameState.PLAYING;
-        this.gameLoop(0);
     }
 
     continueGame() {
@@ -225,6 +250,9 @@ class Game {
             this.controller.update(this.inputManager);
             this.player.update(this.deltaTime, this.world);
 
+            // 相机跟随玩家位置
+            this.renderer.camera.position.copy(this.player.position);
+
             // 加载周围的 Chunk
             this.world.loadChunksAround(
                 this.player.position.x,
@@ -243,6 +271,11 @@ class Game {
             this.ship.updateFlight(this.deltaTime, this.inputManager, this.world);
             this.renderer.camera.position.copy(this.ship.position);
             this.renderer.camera.rotation.copy(this.ship.rotation);
+        }
+
+        // 更新飞船网格位置
+        if (this.shipMesh) {
+            this.shipMesh.position.copy(this.ship.position);
         }
 
         // 更新 HUD

@@ -9,7 +9,8 @@ export class World {
         this.seed = seed;
         this.chunks = new Map();
         this.terrainGenerator = new TerrainGenerator(seed);
-        this.chunkRadius = 5; // 加载范围
+        this.chunkRadius = 3; // 加载范围（减少以提升性能）
+        this.meshesPerFrame = 2; // 每帧生成多少网格
 
         // 调试
         this.debugChunks = false;
@@ -110,20 +111,89 @@ export class World {
         }
     }
 
-    // 更新 Chunk 网格
-    updateChunks(scene) {
+    // 异步分帧生成 Chunks - 每帧生成一批，让出主线程
+    async generateChunksAroundAsync(worldX, worldY, worldZ, onProgress) {
+        const playerChunkX = Math.floor(worldX / CHUNK_SIZE);
+        const playerChunkY = Math.floor(worldY / CHUNK_SIZE);
+        const playerChunkZ = Math.floor(worldZ / CHUNK_SIZE);
+
+        // 收集需要生成的 chunk 坐标
+        const coords = [];
+        for (let x = -this.chunkRadius; x <= this.chunkRadius; x++) {
+            for (let y = -2; y <= 2; y++) {
+                for (let z = -this.chunkRadius; z <= this.chunkRadius; z++) {
+                    coords.push([playerChunkX + x, playerChunkY + y, playerChunkZ + z]);
+                }
+            }
+        }
+
+        const total = coords.length;
+        const batchSize = 30; // 每批生成的 chunks
+
+        for (let i = 0; i < total; i += batchSize) {
+            const end = Math.min(i + batchSize, total);
+            for (let j = i; j < end; j++) {
+                const [cx, cy, cz] = coords[j];
+                this.getChunk(cx, cy, cz);
+            }
+            if (onProgress) onProgress(end / total);
+            // 让出主线程，让浏览器可以更新 UI
+            await new Promise(resolve => setTimeout(resolve, 0));
+        }
+    }
+
+    // 异步分帧生成网格 - 每帧生成几个网格
+    async generateMeshesAsync(scene, onProgress) {
+        const dirtyChunks = [];
         for (const [key, chunk] of this.chunks) {
-            if (chunk.dirty && chunk.mesh) {
-                scene.remove(chunk.mesh);
-                chunk.mesh.geometry.dispose();
+            if (chunk.dirty) {
+                dirtyChunks.push(chunk);
+            }
+        }
+
+        const total = dirtyChunks.length;
+        if (total === 0) {
+            if (onProgress) onProgress(1);
+            return;
+        }
+
+        const batchSize = this.meshesPerFrame;
+
+        for (let i = 0; i < total; i += batchSize) {
+            const end = Math.min(i + batchSize, total);
+            for (let j = i; j < end; j++) {
+                const chunk = dirtyChunks[j];
+                if (chunk.mesh) {
+                    scene.remove(chunk.mesh);
+                    chunk.mesh.geometry.dispose();
+                }
                 chunk.generateMesh();
                 if (chunk.mesh) {
                     scene.add(chunk.mesh);
                 }
-            } else if (chunk.dirty && !chunk.mesh) {
+            }
+            if (onProgress) onProgress(end / total);
+            // 让出主线程
+            await new Promise(resolve => setTimeout(resolve, 0));
+        }
+    }
+
+    // 更新 Chunk 网格 - 每帧只处理几个 dirty chunk，避免卡顿
+    updateChunks(scene) {
+        let processed = 0;
+        for (const [key, chunk] of this.chunks) {
+            if (chunk.dirty) {
+                if (chunk.mesh) {
+                    scene.remove(chunk.mesh);
+                    chunk.mesh.geometry.dispose();
+                }
                 chunk.generateMesh();
                 if (chunk.mesh) {
                     scene.add(chunk.mesh);
+                }
+                processed++;
+                if (processed >= this.meshesPerFrame) {
+                    break;
                 }
             }
         }

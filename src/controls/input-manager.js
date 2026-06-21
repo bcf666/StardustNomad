@@ -169,9 +169,6 @@ export class FirstPersonController {
             this.player.velocity.y = this.player.jumpForce;
             this.player.onGround = false;
         }
-
-        // 更新玩家位置
-        this.player.position.copy(this.camera.position);
     }
 
     updateCamera() {
