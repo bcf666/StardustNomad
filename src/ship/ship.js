@@ -3,16 +3,24 @@ import * as THREE from 'three';
 
 // 飞船模块定义
 export const ShipModuleType = {
-    FRAME_LIGHT: { name: '轻量框架', mass: 1, thrust: 0, power: 0, blockType: BlockType.METAL },
-    FRAME_HEAVY: { name: '重型框架', mass: 3, thrust: 0, power: 0, blockType: BlockType.SCI_FI_PANEL },
-    CHEMICAL_ENGINE: { name: '化学引擎', mass: 5, thrust: 100, power: 10, blockType: BlockType.SCI_FI_PANEL },
-    ION_ENGINE: { name: '离子引擎', mass: 3, thrust: 50, power: 5, efficient: true, blockType: BlockType.SCI_FI_PANEL },
-    COCKPIT: { name: '驾驶舱', mass: 2, thrust: 0, power: 0, required: true, blockType: BlockType.GLASS },
-    CARGO: { name: '货舱', mass: 2, thrust: 0, power: 0, capacity: 1000, blockType: BlockType.METAL },
-    MINING_LASER: { name: '采矿激光', mass: 4, thrust: 0, power: -50, miningSpeed: 5, blockType: BlockType.SCI_FI_PANEL },
-    SOLAR_PANEL: { name: '太阳能板', mass: 1, thrust: 0, power: 20, blockType: BlockType.METAL },
-    FISSION_REACTOR: { name: '裂变反应堆', mass: 10, thrust: 0, power: 1000, blockType: BlockType.SCI_FI_PANEL },
-    SHIELD_GENERATOR: { name: '护盾发生器', mass: 6, thrust: 0, power: -30, shield: 200, blockType: BlockType.SCI_FI_PANEL }
+    FRAME_LIGHT: { name: '轻量框架', mass: 1, thrust: 0, power: 0, blockType: BlockType.METAL, icon: '🔧' },
+    FRAME_HEAVY: { name: '重型框架', mass: 3, thrust: 0, power: 0, blockType: BlockType.SCI_FI_PANEL, icon: '🔩' },
+    CHEMICAL_ENGINE: { name: '化学引擎', mass: 5, thrust: 100, power: 10, blockType: BlockType.SCI_FI_PANEL, icon: '🔥' },
+    ION_ENGINE: { name: '离子引擎', mass: 3, thrust: 50, power: 5, efficient: true, blockType: BlockType.SCI_FI_PANEL, icon: '⚡' },
+    PLASMA_ENGINE: { name: '等离子引擎', mass: 8, thrust: 200, power: -50, blockType: BlockType.SCI_FI_PANEL, icon: '💫' },
+    COCKPIT: { name: '驾驶舱', mass: 2, thrust: 0, power: 0, required: true, blockType: BlockType.GLASS, icon: '🛸' },
+    CARGO: { name: '货舱', mass: 2, thrust: 0, power: 0, capacity: 1000, blockType: BlockType.METAL, icon: '📦' },
+    MINING_LASER: { name: '采矿激光', mass: 4, thrust: 0, power: -50, miningSpeed: 5, blockType: BlockType.SCI_FI_PANEL, icon: '⛏️' },
+    SOLAR_PANEL: { name: '太阳能板', mass: 1, thrust: 0, power: 20, blockType: BlockType.METAL, icon: '☀️' },
+    FISSION_REACTOR: { name: '裂变反应堆', mass: 10, thrust: 0, power: 1000, blockType: BlockType.SCI_FI_PANEL, icon: '☢️' },
+    FUSION_REACTOR: { name: '聚变反应堆', mass: 15, thrust: 0, power: 5000, blockType: BlockType.SCI_FI_PANEL, icon: '🌟' },
+    SHIELD_GENERATOR: { name: '护盾发生器', mass: 6, thrust: 0, power: -30, shield: 200, blockType: BlockType.SCI_FI_PANEL, icon: '🛡️' },
+    WEAPON_LASER: { name: '激光武器', mass: 5, thrust: 0, power: -100, damage: 50, blockType: BlockType.SCI_FI_PANEL, icon: '🔫' },
+    WEAPON_MISSILE: { name: '导弹发射器', mass: 8, thrust: 0, power: -20, damage: 200, blockType: BlockType.SCI_FI_PANEL, icon: '🚀' },
+    SENSOR_ARRAY: { name: '传感器阵列', mass: 2, thrust: 0, power: -10, range: 500, blockType: BlockType.GLASS, icon: '📡' },
+    LIFE_SUPPORT: { name: '生命维持系统', mass: 4, thrust: 0, power: -20, oxygen: 100, blockType: BlockType.SCI_FI_PANEL, icon: '🫁' },
+    NAVIGATION: { name: '导航系统', mass: 1, thrust: 0, power: -5, blockType: BlockType.GLASS, icon: '🧭' },
+    ANTIGRAVITY: { name: '反重力模块', mass: 6, thrust: 0, power: -80, hover: true, blockType: BlockType.SCI_FI_PANEL, icon: '⬆️' }
 };
 
 // 飞船

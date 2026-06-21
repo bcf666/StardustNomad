@@ -17,7 +17,17 @@ export const BlockType = {
     METAL: 14,
     SCI_FI_PANEL: 15,
     COAL_ORE: 16,
-    GOLD_ORE: 17
+    GOLD_ORE: 17,
+    // 新增方块类型
+    TITANIUM_ORE: 18,
+    URANIUM_ORE: 19,
+    CRYSTAL: 20,
+    OBSIDIAN: 21,
+    BEDROCK: 22,
+    SNOW: 23,
+    PERMAFROST: 24,
+    CACTUS: 25,
+    DEADWOOD: 26
 };
 
 // 方块属性
@@ -39,7 +49,17 @@ export const BlockData = {
     [BlockType.METAL]: { name: '金属板', solid: true, transparent: false, color: 0xC0C0C0 },
     [BlockType.SCI_FI_PANEL]: { name: '科幻面板', solid: true, transparent: false, color: 0x4a5568 },
     [BlockType.COAL_ORE]: { name: '煤矿', solid: true, transparent: false, color: 0x2F1810 },
-    [BlockType.GOLD_ORE]: { name: '金矿', solid: true, transparent: false, color: 0xFFD700 }
+    [BlockType.GOLD_ORE]: { name: '金矿', solid: true, transparent: false, color: 0xFFD700 },
+    // 新增方块属性
+    [BlockType.TITANIUM_ORE]: { name: '钛矿', solid: true, transparent: false, color: 0x708090 },
+    [BlockType.URANIUM_ORE]: { name: '铀矿', solid: true, transparent: false, color: 0x7CFC00, emissive: true },
+    [BlockType.CRYSTAL]: { name: '水晶', solid: true, transparent: true, color: 0xE0E0FF, emissive: true },
+    [BlockType.OBSIDIAN]: { name: '黑曜石', solid: true, transparent: false, color: 0x1a1a2e },
+    [BlockType.BEDROCK]: { name: '基岩', solid: true, transparent: false, color: 0x333333 },
+    [BlockType.SNOW]: { name: '雪', solid: true, transparent: false, color: 0xFFFAFA },
+    [BlockType.PERMAFROST]: { name: '冻土', solid: true, transparent: false, color: 0x5F9EA0 },
+    [BlockType.CACTUS]: { name: '仙人掌', solid: true, transparent: false, color: 0x2E8B57 },
+    [BlockType.DEADWOOD]: { name: '枯木', solid: true, transparent: false, color: 0x8B7355 }
 };
 
 // 资源类型（可采集的方块对应的资源）
@@ -53,7 +73,16 @@ export const BlockResources = {
     [BlockType.DIRT]: { item: 'dirt', amount: 1 },
     [BlockType.SAND]: { item: 'sand', amount: 1 },
     [BlockType.WOOD]: { item: 'wood', amount: 1 },
-    [BlockType.GLASS]: { item: 'glass', amount: 1 }
+    [BlockType.GLASS]: { item: 'glass', amount: 1 },
+    // 新增资源
+    [BlockType.TITANIUM_ORE]: { item: 'titanium_ore', amount: 1 },
+    [BlockType.URANIUM_ORE]: { item: 'uranium_ore', amount: 1 },
+    [BlockType.CRYSTAL]: { item: 'crystal', amount: 1 },
+    [BlockType.OBSIDIAN]: { item: 'obsidian', amount: 1 },
+    [BlockType.SNOW]: { item: 'snow', amount: 1 },
+    [BlockType.PERMAFROST]: { item: 'permafrost', amount: 1 },
+    [BlockType.CACTUS]: { item: 'cactus', amount: 1 },
+    [BlockType.DEADWOOD]: { item: 'deadwood', amount: 1 }
 };
 
 // 方块是否透明（用于面剔除）
