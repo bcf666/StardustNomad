@@ -1,1 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>星尘牧歌 - Stardust Nomad</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            overflow: hidden;
+            background: #000;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        #game-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3a 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease;
+        }
+
+        #loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #loading-screen h1 {
+            color: #fff;
+            font-size: 48px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(100, 150, 255, 0.5);
+        }
+
+        #loading-screen p {
+            color: #8af;
+            font-size: 18px;
+            margin-bottom: 40px;
+        }
+
+        #start-btn {
+            padding: 15px 50px;
+            font-size: 20px;
+            background: linear-gradient(135deg, #3366cc 0%, #6699ff 100%);
+            border: none;
+            border-radius: 30px;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        #start-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(100, 150, 255, 0.6);
+        }
+
+        #hud {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            color: white;
+            font-size: 14px;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        .hud-item {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 8px 15px;
+            margin-bottom: 8px;
+            border-radius: 5px;
+            border-left: 3px solid #6699ff;
+        }
+
+        #crosshair {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        #crosshair::before,
+        #crosshair::after {
+            content: '';
+            position: absolute;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        #crosshair::before {
+            width: 2px;
+            height: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        #crosshair::after {
+            width: 100%;
+            height: 2px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        #hotbar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 5px;
+            z-index: 100;
+        }
+
+        .hotbar-slot {
+            width: 50px;
+            height: 50px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #555;
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+        }
+
+        .hotbar-slot.selected {
+            border-color: #6699ff;
+            box-shadow: 0 0 10px rgba(102, 153, 255, 0.5);
+        }
+
+        #debug-info {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 12px;
+            text-align: right;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        #mode-indicator {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #8cf;
+            font-size: 16px;
+            padding: 10px 20px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 20px;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        #block-indicator {
+            position: fixed;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 15px;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            z-index: 100;
+        }
+
+        #fly-controls {
+            position: fixed;
+            bottom: 100px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 15px;
+            border-radius: 10px;
+            color: #8cf;
+            font-size: 13px;
+            z-index: 100;
+        }
+
+        #fly-controls h4 {
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        #fly-controls p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading-screen">
+        <h1>星尘牧歌</h1>
+        <p>Stardust Nomad</p>
+        <button id="start-btn">开始游戏</button>
+    </div>
+
+    <div id="game-container"></div>
+
+    <div id="hud">
+        <div class="hud-item" id="position-display">位置: 0, 0, 0</div>
+        <div class="hud-item" id="velocity-display">速度: 0</div>
+        <div class="hud-item" id="chunk-display">Chunk: 0, 0</div>
+    </div>
+
+    <div id="crosshair"></div>
+
+    <div id="hotbar"></div>
+
+    <div id="debug-info"></div>
+
+    <div id="mode-indicator">行走模式</div>
+
+    <div id="block-indicator">
+        <div>目标方块: --</div>
+        <div>距离: --</div>
+    </div>
+
+    <div id="fly-controls" style="display: none;">
+        <h4>飞行控制</h4>
+        <p>W/S - 前进/后退</p>
+        <p>A/D - 左转/右转</p>
+        <p>空格/Shift - 上升/下降</p>
+        <p>鼠标 - 视角</p>
+    </div>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+        }
+    }
+    </script>
+    <script type="module" src="src/main.js"></script>
+</body>
+</html>
